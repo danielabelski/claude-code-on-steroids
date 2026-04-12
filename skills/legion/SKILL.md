@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**LEGION** — *A legion is a large, coordinated force organized into precise, independent units.*
+When invoked: selects the optimal agent topology for the task — parallel (independent tasks), pipeline (sequential stages), hierarchical (orchestrator + specialists), or mesh (peer review) — and coordinates execution across all agents.
+
+
 **Core principle:** Match agent topology to task structure — the right coordination pattern prevents chaos and maximizes parallelism.
 
 This skill adds **swarm coordination topologies** to Superpowers. Choose the right agent organization for each task.

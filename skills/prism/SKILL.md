@@ -8,6 +8,10 @@ type: domain
 
 ## Overview
 
+**PRISM** — *A prism refracts white light into its full visible spectrum.*
+When invoked: refracts your UI problem into its full spectrum — visual style selection (67 styles), chart type selection (25 types), WCAG 2.1 AA accessibility, Core Web Vitals targets, bundle budgets, and font pairing.
+
+
 **Core principle:** Great UIs are not accidents — they are the result of deliberate design decisions grounded in visual language, accessibility, performance, and data communication.
 
 This skill provides **UI/UX intelligence** for web and app developers: style selection, chart selection, typography, accessibility, performance, and SEO.

@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**CHRONICLE** — *Chronicles are authoritative records of what happened and why — consulted before repeating history.*
+When invoked: searches the ReasoningBank for patterns matching the current task before work begins, and stores a structured entry (problem → investigation → solution → reusable insight) after the task completes.
+
+
 **Core principle:** Never solve the same problem twice without remembering what worked.
 
 This skill adds **self-learning capability** to Superpowers. After each task, you store what worked. Before each task, you search for relevant past patterns.

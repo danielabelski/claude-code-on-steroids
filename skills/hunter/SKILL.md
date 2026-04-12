@@ -7,6 +7,10 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 
 ## Overview
 
+**HUNTER** — *A hunter tracks prey methodically — no guessing, no rushing, no false strikes.*
+When invoked: blocks all fix attempts until root cause is found, collects evidence, bisects to the exact failure point, and only then proposes a targeted fix. Symptom patches are rejected by design.
+
+
 Random fixes waste time and create new bugs. Quick patches mask underlying issues.
 
 **Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.

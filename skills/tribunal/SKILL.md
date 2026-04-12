@@ -5,6 +5,9 @@ description: Use when completing tasks, implementing major features, or before m
 
 # Requesting Code Review
 
+**TRIBUNAL** — *A tribunal is a formal body of judgment that delivers evidence-based verdicts.*
+When invoked: dispatches a domain-aware code reviewer (ML / AI / Embedded / Frontend / Security), evaluates the work against spec and quality standards, and returns a structured verdict before anything merges.
+
 Dispatch superpowers:code-reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
 
 **Core principle:** Review early, review often.

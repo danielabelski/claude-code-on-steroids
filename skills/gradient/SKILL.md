@@ -8,6 +8,10 @@ type: domain
 
 ## Overview
 
+**GRADIENT** — *In ML, the gradient is the directional signal that tells you exactly how to improve.*
+When invoked: assesses pipeline stage (data / training / serving / MLOps), loads the relevant pattern file, and applies ML-specific validation — schema checks, drift detection, training-serving skew guards, latency budgets.
+
+
 **Core principle:** ML systems have unique failure modes — data drift, training-serving skew, silent degradation. Test data and models, not just code.
 
 **Announce at start:** "I'm using the GRADIENT skill for ML-specific patterns."

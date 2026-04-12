@@ -8,6 +8,10 @@ type: domain
 
 ## Overview
 
+**IRONCORE** — *Iron is hard, precise, and unforgiving — exactly like embedded systems.*
+When invoked: assesses hardware context (bare-metal / RTOS / HAL / ISR), loads the relevant pattern file, and enforces embedded discipline — deterministic timing, ISR safety, lock-free queues, type-safe register access.
+
+
 **Core principle:** Embedded systems have zero margin for error — timing violations, race conditions, and memory corruption cause real-world failures. Design for determinism and verifiability.
 
 **Announce at start:** "I'm using the IRONCORE skill for EE-specific patterns."

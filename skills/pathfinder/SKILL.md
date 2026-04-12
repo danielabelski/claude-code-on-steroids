@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**PATHFINDER** — *A pathfinder scouts unfamiliar terrain before the team moves in.*
+When invoked: maps an unknown codebase in 5 phases — project structure, entry points, data flow, architectural patterns, and landmine files — before writing a single line of code.
+
+
 **Core principle:** Never write code in a codebase you haven't mapped. 20 minutes of structured exploration prevents days of working against the grain.
 
 Unfamiliar codebases have hidden conventions, undocumented constraints, landmine files, and established patterns. Violating them creates bugs that look mysterious but are obvious to anyone who knows the codebase.

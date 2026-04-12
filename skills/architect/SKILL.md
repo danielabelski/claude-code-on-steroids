@@ -5,6 +5,9 @@ description: "You MUST use this before any creative work - creating features, bu
 
 # Brainstorming Ideas Into Designs
 
+**ARCHITECT** — *An architect designs the building before a single brick is laid.*
+When invoked: explores project context, asks clarifying questions one at a time, proposes 2–3 approaches with trade-offs, presents the design section by section, gets approval, writes the spec document, and only then transitions to BLUEPRINT.
+
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.

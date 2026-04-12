@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**HORIZON** — *The horizon is where you look to see what's approaching before it arrives.*
+When invoked: monitors context window health (Green / Yellow / Red), compresses stale reasoning, distills subagent context to the minimum required, and prepares clean handoff packages when a fresh session is needed.
+
+
 **Core principle:** A full context window is a silent quality killer. Proactively manage it — don't wait until things break.
 
 Long sessions accumulate stale reasoning, superseded decisions, and irrelevant history. Subagents given bloated context lose focus. Claude running near the limit compresses its own earlier thinking without telling you.

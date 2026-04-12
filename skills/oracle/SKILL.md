@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**ORACLE** — *Latin "oraculum": the prophetic voice consulted before any major decision.*
+When invoked: scores task complexity 1–10 across 8 dimensions, selects the optimal skill chain (BUG / FEATURE / REFACTOR / ARCHITECT), assigns the correct model tier (Haiku → Opus), and searches memory for relevant past patterns — all in 60 seconds before any code is written.
+
+
 **Core principle:** Never start a task cold. 60 seconds of classification prevents hours of wrong-direction work.
 
 This skill is the **meta-intelligence layer** of Superpowers. It classifies every task before execution, selects the optimal skill chain, searches for relevant past patterns, and assigns the correct model tier — automatically.

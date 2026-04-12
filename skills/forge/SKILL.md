@@ -7,6 +7,10 @@ description: Use when implementing any feature or bugfix, before writing impleme
 
 ## Overview
 
+**FORGE** — *A forge is where raw metal is shaped under heat and pressure into something precise and durable.*
+When invoked: writes the failing test first, refuses to write implementation until the test exists and fails for the right reason, then drives the code to pass it. Red → Green → Refactor, every time.
+
+
 Write the test first. Watch it fail. Write minimal code to pass.
 
 **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.

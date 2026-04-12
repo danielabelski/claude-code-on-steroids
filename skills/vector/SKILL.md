@@ -8,6 +8,10 @@ type: process
 
 ## Overview
 
+**VECTOR** — *A vector has both direction and magnitude — it points precisely at the right target.*
+When invoked: evaluates task complexity and routes to the least-capable model that can succeed — Tier 0 (no LLM) through Tier 3 (Opus). Systematic routing cuts API costs 50–65% vs treating everything as Opus.
+
+
 **Core principle:** Use the least capable model that can handle the task — save cost and latency without sacrificing quality.
 
 This skill adds **intelligent model selection** to Superpowers. Route tasks to the appropriate tier based on complexity.

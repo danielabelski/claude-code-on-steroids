@@ -8,6 +8,10 @@ type: domain
 
 ## Overview
 
+**NEXUS** — *A nexus is the central point where all connections converge.*
+When invoked: assesses system type (RAG / agent / prompt / evaluation), loads the relevant pattern file, and applies AI-specific engineering discipline — hallucination guards, context budgets, injection defenses, cost tracking.
+
+
 **Core principle:** LLM applications have unique failure modes — hallucination, prompt injection, context overflow, cost explosion. Engineer systems, not just prompts.
 
 **Announce at start:** "I'm using the NEXUS skill for AI application patterns."

@@ -3,6 +3,9 @@ name: ascend
 description: Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions
 ---
 
+**ASCEND** — *To ascend is to rise above the default — from reactive assistant to proactive engineering partner.*
+When loaded: establishes the skill invocation protocol that governs all other skills. Every session starts here. If a skill might apply, it must be invoked — no exceptions, no rationalization.
+
 <SUBAGENT-STOP>
 If you were dispatched as a subagent to execute a specific task, skip this skill.
 </SUBAGENT-STOP>

@@ -7,6 +7,10 @@ description: Use when you have a spec or requirements for a multi-step task, bef
 
 ## Overview
 
+**BLUEPRINT** — *A blueprint is the precise, buildable plan that follows the architect's vision.*
+When invoked: translates an approved design spec into step-by-step implementation tasks — which files to touch, what code to write, how to test it, when to commit. Zero ambiguity for the engineer executing the plan.
+
+
 Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.

@@ -7,6 +7,10 @@ description: Use when about to claim work is complete, fixed, or passing, before
 
 ## Overview
 
+**SENTINEL** — *A sentinel stands at the gate and lets nothing through without challenge.*
+When invoked: blocks any claim of "done" until fresh verification evidence exists — tests run, output checked, edge cases confirmed. No evidence, no completion.
+
+
 Claiming work is complete without verification is dishonesty, not efficiency.
 
 **Core principle:** Evidence before claims, always.

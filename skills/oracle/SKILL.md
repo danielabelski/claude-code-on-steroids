@@ -16,7 +16,7 @@ When invoked: scores task complexity 1–10 across 8 dimensions, selects the opt
 
 This skill is the **meta-intelligence layer** of Superpowers. It classifies every task before execution, selects the optimal skill chain, searches for relevant past patterns, and assigns the correct model tier — automatically.
 
-**Announce at start:** "Running task-intake to classify and plan approach."
+**Announce at start:** "Running ORACLE to classify and plan approach."
 
 **WHEN TO RUN:**
 - Before ANY task that touches code or architecture
@@ -112,52 +112,52 @@ Is this a RESEARCH / EXPLORATION?
 
 ### [debug-chain]
 ```
-1. learning-from-experience  → search for similar past bugs
-2. systematic-debugging      → root cause investigation
-3. test-driven-development   → failing test before fix
-4. verification-before-completion → verify fix works
-5. learning-from-experience  → store pattern after success
+1. chronicle            → search for similar past bugs
+2. hunter               → root cause investigation
+3. forge                → failing test before fix
+4. sentinel             → verify fix works
+5. chronicle            → store pattern after success
 ```
 
 ### [feature-chain]
 ```
-1. learning-from-experience  → search for similar past features
+1. chronicle            → search for similar past features
 2. [domain skill(s)]         → apply domain expertise
-3. brainstorming             → design before code (complexity ≥ 4)
-4. writing-plans             → implementation plan (complexity ≥ 5)
-5. model-routing             → assign tier per task
-6. swarm-coordination        → topology if 3+ independent files
-7. subagent-driven-development → execute plan (complexity ≥ 6)
-8. verification-before-completion → gate before completion
-9. requesting-code-review    → review gate (complexity ≥ 7)
-10. learning-from-experience → store pattern after success
+3. architect            → design before code (complexity ≥ 4)
+4. blueprint            → implementation plan (complexity ≥ 5)
+5. vector               → assign tier per task
+6. legion               → topology if 3+ independent files
+7. phantom              → execute plan (complexity ≥ 6)
+8. sentinel             → gate before completion
+9. tribunal             → review gate (complexity ≥ 7)
+10. chronicle            → store pattern after success
 ```
 
 ### [refactor-chain]
 ```
-1. learning-from-experience  → search past refactor patterns
-2. test-driven-development   → baseline tests before touching code
-3. writing-plans             → plan the refactor (complexity ≥ 5)
-4. model-routing             → tier 1/2 for mechanical work
-5. verification-before-completion → no regression
-6. learning-from-experience  → store pattern
+1. chronicle            → search past refactor patterns
+2. forge                → baseline tests before touching code
+3. blueprint            → plan the refactor (complexity ≥ 5)
+4. vector               → tier 1/2 for mechanical work
+5. sentinel             → no regression
+6. chronicle            → store pattern
 ```
 
 ### [architecture-chain]
 ```
-1. learning-from-experience  → past architecture decisions
-2. brainstorming             → explore 2-3 approaches
-3. writing-plans (SPARC)     → SPARC structure REQUIRED
-4. requesting-code-review    → architecture review gate
-5. learning-from-experience  → store decision + rationale
+1. chronicle            → past architecture decisions
+2. architect            → explore 2-3 approaches
+3. blueprint (SPARC)    → SPARC structure REQUIRED
+4. tribunal             → architecture review gate
+5. chronicle            → store decision + rationale
 ```
 
 ### [research-chain]
 ```
-1. learning-from-experience  → search existing knowledge
-2. swarm-coordination (Mesh) → parallel investigation
-3. brainstorming             → synthesize findings
-4. learning-from-experience  → store findings
+1. chronicle            → search existing knowledge
+2. legion (Mesh)        → parallel investigation
+3. architect            → synthesize findings
+4. chronicle            → store findings
 ```
 
 ---
@@ -340,13 +340,13 @@ AFTER-ACTION REVIEW
 - `hunter` — when task type is debug
 
 **Called by:**
-- `ascend` — task-intake is the FIRST process skill for non-trivial tasks
+- `ascend` — ORACLE is the FIRST process skill for non-trivial tasks
 
 ---
 
 ## Red Flags
 
-**Never skip task-intake when:**
+**Never skip ORACLE when:**
 - You feel "this is obviously simple" (obvious ≠ simple)
 - You're under time pressure (intake is 60 seconds, saves hours)
 - The user says "just quickly..." (scope always grows)

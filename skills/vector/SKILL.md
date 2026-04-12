@@ -16,7 +16,24 @@ When invoked: evaluates task complexity and routes to the least-capable model th
 
 This skill adds **intelligent model selection** to Superpowers. Route tasks to the appropriate tier based on complexity.
 
-**Announce at start:** "I'm using the model-routing skill to select the optimal model for this task."
+**Announce at start:** "Running VECTOR to assign the correct model tier."
+
+---
+
+## Single-Session vs Subagent Context
+
+**Important:** In a standard Claude Code session, you run one model for the entire conversation.
+Tier routing applies differently depending on context:
+
+| Context | How VECTOR applies |
+|---------|-------------------|
+| **Main session** | Tier selection is advisory — it informs how much reasoning depth to apply, not which model to invoke |
+| **Spawning subagents** (via COMMANDER or PHANTOM) | Tier selection is literal — specify the model when dispatching: Haiku for Tier 1, Sonnet for Tier 2, Opus for Tier 3 |
+| **Multi-agent swarms** (via LEGION) | Assign each agent a tier based on its sub-task complexity |
+
+**When VECTOR delivers full cost savings:** subagent dispatch. Assigning Haiku to mechanical tasks and Opus only to critical reasoning tasks is where the 50–65% cost reduction is realized.
+
+**When VECTOR informs depth:** in your main session, use the tier score to decide how thorough to be — Tier 1 = quick answer, Tier 3 = full investigation + multi-step plan.
 
 ## 3-Tier Model Hierarchy
 

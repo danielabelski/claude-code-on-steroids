@@ -16,7 +16,7 @@ When invoked: monitors context window health (Green / Yellow / Red), compresses 
 
 Long sessions accumulate stale reasoning, superseded decisions, and irrelevant history. Subagents given bloated context lose focus. Claude running near the limit compresses its own earlier thinking without telling you.
 
-**Announce at start:** "I'm using the context-management skill to manage session context."
+**Announce at start:** "Running HORIZON to assess and manage context health."
 
 ---
 

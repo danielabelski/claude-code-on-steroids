@@ -16,7 +16,7 @@ When invoked: selects the optimal agent topology for the task — parallel (inde
 
 This skill adds **swarm coordination topologies** to Superpowers. Choose the right agent organization for each task.
 
-**Announce at start:** "I'm using the swarm-coordination skill to organize agents optimally."
+**Announce at start:** "Running LEGION to select agent topology and coordinate."
 
 ## 4 Swarm Topologies
 

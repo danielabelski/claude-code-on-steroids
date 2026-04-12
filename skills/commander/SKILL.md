@@ -17,6 +17,21 @@ When you have multiple unrelated failures (different test files, different subsy
 
 **Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
 
+---
+
+## COMMANDER vs PHANTOM — Which to Use
+
+| Question | COMMANDER | PHANTOM |
+|----------|-----------|---------|
+| Do you have a written implementation plan? | No — or N/A | **Yes — required** |
+| Are the tasks already defined? | You define them now | Already defined in plan |
+| Primary use case | Parallel bug investigation, parallel research | Plan execution task by task |
+| Review protocol | You review and merge results | Two-stage: spec compliance → code quality |
+| Session behaviour | Spawns agents for concurrent work | Sequential: one agent per task, reviewed before next |
+| Best trigger | 3+ independent failures / research angles | Implementation plan with ≥ 3 independent tasks |
+
+**Rule:** If you have a BLUEPRINT plan → use PHANTOM. If you have independent problems with no plan → use COMMANDER.
+
 ## When to Use
 
 ```dot

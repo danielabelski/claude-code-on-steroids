@@ -16,7 +16,7 @@ When invoked: searches the ReasoningBank for patterns matching the current task 
 
 This skill adds **self-learning capability** to Superpowers. After each task, you store what worked. Before each task, you search for relevant past patterns.
 
-**Announce at start:** "I'm using the learning-from-experience skill to leverage past patterns."
+**Announce at start:** "Running CHRONICLE to search and store patterns."
 
 ## The Learning Loop
 
@@ -49,20 +49,36 @@ digraph learning_loop {
 
 ### Step 1: Search ReasoningBank
 
+The ReasoningBank lives in the project memory directory alongside `MEMORY.md`.
+Pattern files use the naming convention: `pattern_<domain>_<keywords>.md`
+
+**How to search — use Grep on the memory directory:**
+
 ```bash
-# Search for relevant past patterns
-memory_search(query='<problem-type> <technologies> <goal>')
+# Search for patterns by keyword
+grep -rl "<keyword>" ~/.claude/projects/<project-hash>/memory/
+grep -l "pattern_" ~/.claude/projects/<project-hash>/memory/
+
+# Read MEMORY.md index first — it lists all stored patterns
+cat ~/.claude/projects/<project-hash>/memory/MEMORY.md
 ```
 
-**Query construction:**
-- Include problem category: `bug-fix`, `feature`, `refactor`, `integration`, `debugging`
-- Include technologies: `react`, `postgresql`, `redis`, `aws-lambda`
-- Include goal keywords: `latency`, `validation`, `caching`, `authentication`
+**In Claude Code sessions — use the Read and Grep tools:**
+1. Read `MEMORY.md` to see the pattern index
+2. Grep the memory directory for relevant keywords
+3. Read matching pattern files in full
 
-**Example queries:**
-- `bug-fix postgresql connection-pool timeout`
-- `feature react form-validation typescript`
-- `refactor extract-module circular-dependency`
+**Query construction — search for:**
+- Problem category: `bug-fix`, `feature`, `refactor`, `integration`, `debugging`
+- Technologies: `react`, `postgresql`, `redis`, `aws-lambda`
+- Keywords from the goal: `latency`, `validation`, `caching`, `auth`
+
+**Example searches:**
+```
+grep -rl "connection-pool" ~/.claude/projects/<hash>/memory/
+grep -rl "form-validation react" ~/.claude/projects/<hash>/memory/
+grep -rl "circular-dependency" ~/.claude/projects/<hash>/memory/
+```
 
 ### Step 2: Review Top 5 Matches
 
@@ -100,13 +116,28 @@ Answer these questions:
 
 ### Step 5: Store in ReasoningBank
 
-**Storage format:**
+**How to store — write a pattern file to memory:**
+
+File name: `pattern_<domain>_<keywords>.md`
+Location: `~/.claude/projects/<project-hash>/memory/`
+
+Then add a one-line entry to `MEMORY.md`:
+```
+- [Pattern: <name>](pattern_<domain>_<keywords>.md) — <one-line hook>
+```
+
+**Pattern file format:**
 
 ```markdown
+---
+name: Pattern — <descriptive-name>
+description: <one-line description for relevance matching>
+type: project
+---
+
 ## Pattern: <descriptive-name>
 
 **Key:** `<domain>:<problem-type>:<keywords>`
-**Namespace:** `<project-name>`
 **Timestamp:** `<ISO-8601>`
 
 ### Problem
@@ -115,27 +146,18 @@ Answer these questions:
 ### Solution
 <What worked, with code snippet if applicable>
 
-```<language>
-<minimal working example>
-```
-
 ### Failed Attempts
-- <what you tried that didn't work>
-- <why it failed>
+- <what you tried that didn't work and why>
 
 ### Key Insight
-<The non-obvious part that made it work>
+<The non-obvious part — this is the most important field>
 
 ### When to Apply
-- <situation 1 where this applies>
+- <situation 1>
 - <situation 2>
 
 ### When NOT to Apply
 - <situation where this pattern is wrong>
-
-### Related Patterns
-- `<key-of-related-pattern-1>`
-- `<key-of-related-pattern-2>`
 
 ### Metrics
 - Time to solution: <minutes>
@@ -161,7 +183,7 @@ Examples:
 
 1. **Search for related keys:**
    ```
-   memory_search(query='<domain>:<problem-type>')
+   grep -rl "<domain> <problem-type>" ~/.claude/projects/<hash>/memory/
    ```
 
 2. **Check for contradictions:**
@@ -258,7 +280,7 @@ For this project: Check the `MEMORY.md` path shown in system context at conversa
 
 ```
 STOP. Search ReasoningBank:
-memory_search(query='<current-blocker>')
+grep -rl "<current-blocker>" ~/.claude/projects/<hash>/memory/
 
 If found: Apply suggested approach
 If not found: This is novel — document the breakthrough when you find it

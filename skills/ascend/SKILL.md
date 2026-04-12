@@ -101,12 +101,12 @@ These thoughts mean STOP—you're rationalizing:
 
 When multiple skills could apply, use this order:
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
+1. **Process skills first** (architect, hunter) - these determine HOW to approach the task
 2. **Domain skills second** - apply engineering-specific knowledge for the domain
-3. **Implementation skills third** (frontend-excellence, mcp-builder) - guide execution
+3. **Implementation skills third** (prism, mcp-builder) - guide execution
 
-"Let's build X" → brainstorming first, then domain skill, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
+"Let's build X" → architect first, then domain skill, then implementation skills.
+"Fix this bug" → hunter first, then domain-specific skills.
 
 ## Domain Skill Triggers
 
@@ -142,66 +142,66 @@ Pre-built chains for common scenarios. Use these instead of reasoning from scrat
 
 ```
 NEW PROJECT / UNFAMILIAR CODEBASE:
-  codebase-onboarding →          ← ALWAYS first in any new codebase
-  task-intake →
+  pathfinder →          ← ALWAYS first in any new codebase
+  oracle →
   → continue with appropriate chain
 
 DEBUG CHAIN:
-  learning-from-experience (search) →
-  systematic-debugging →
-  test-driven-development →
-  verification-before-completion (+ confidence gate) →
-  task-intake (after-action review) →
-  learning-from-experience (store)
+  chronicle (search) →
+  hunter →
+  forge →
+  sentinel (+ confidence gate) →
+  oracle (after-action review) →
+  chronicle (store)
 
 FEATURE CHAIN:
-  task-intake →
-  learning-from-experience (search) →
+  oracle →
+  chronicle (search) →
   [domain skill if applicable] →
-  brainstorming →
-  writing-plans →
-  context-management (check health before dispatch) →
-  model-routing + swarm-coordination →
-  subagent-driven-development →
-  verification-before-completion →
-  requesting-code-review (with DOMAIN set) →
-  task-intake (after-action review) →
-  learning-from-experience (store)
+  architect →
+  blueprint →
+  horizon (check health before dispatch) →
+  vector + legion →
+  phantom →
+  sentinel →
+  tribunal (with DOMAIN set) →
+  oracle (after-action review) →
+  chronicle (store)
 
 ARCHITECTURE CHAIN:
-  task-intake →
-  learning-from-experience (search) →
-  brainstorming →
-  writing-plans (SPARC REQUIRED) →
-  requesting-code-review (DOMAIN: security or relevant) →
-  task-intake (after-action review) →
-  learning-from-experience (store)
+  oracle →
+  chronicle (search) →
+  architect →
+  blueprint (SPARC REQUIRED) →
+  tribunal (DOMAIN: security or relevant) →
+  oracle (after-action review) →
+  chronicle (store)
 
 REFACTOR CHAIN:
-  task-intake →
-  test-driven-development (baseline tests first) →
-  writing-plans →
-  context-management (check before dispatch) →
-  verification-before-completion →
-  task-intake (after-action review) →
-  learning-from-experience (store)
+  oracle →
+  forge (baseline tests first) →
+  blueprint →
+  horizon (check before dispatch) →
+  sentinel →
+  oracle (after-action review) →
+  chronicle (store)
 
 LONG SESSION (10+ exchanges):
-  context-management (health check + compress) →
+  horizon (health check + compress) →
   → continue or handoff to fresh session
 
 ML/AI/EE/FRONTEND WORK:
-  task-intake →
-  [ml-engineering | ai-engineering | embedded-systems | frontend-excellence] →
+  oracle →
+  [gradient | nexus | ironcore | prism] →
   → continue with feature-chain or debug-chain as appropriate
   (multi-domain: run synthesis step in task-intake first)
 ```
 
 ## Skill Types
 
-**Rigid** (TDD, debugging, verification, task-intake): Follow exactly. Don't adapt away discipline.
+**Rigid** (forge, hunter, sentinel, oracle): Follow exactly. Don't adapt away discipline.
 
-**Flexible** (domain patterns, model routing): Adapt principles to context.
+**Flexible** (domain patterns, vector): Adapt principles to context.
 
 The skill itself tells you which.
 

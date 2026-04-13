@@ -47,6 +47,27 @@ digraph learning_loop {
 
 **BEFORE starting any non-trivial task:**
 
+### Progressive Filtering Protocol (Token-Efficient Search)
+
+Use a 3-layer funnel — stop at the earliest layer that answers the question. Never read all pattern files upfront.
+
+```
+Layer 1 — Index scan (~50 tokens):
+  Read MEMORY.md only. Identify candidate pattern files by name/description.
+  → If no candidates match, skip to Layer 3 or declare no patterns found.
+
+Layer 2 — Keyword grep (~100-200 tokens):
+  Grep candidate files for specific keywords from the task.
+  → Narrows candidates to top 3-5 matches.
+
+Layer 3 — Full read (~500-1000 tokens each):
+  Read only the confirmed-relevant files in full.
+  → Maximum 3 files. Stop when pattern found.
+```
+
+**Token savings vs. reading all files: ~5-10x.**
+Never reach Layer 3 without Layer 1 and 2 first.
+
 ### Step 1: Search ReasoningBank
 
 The ReasoningBank lives in the project memory directory alongside `MEMORY.md`.

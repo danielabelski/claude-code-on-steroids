@@ -22,6 +22,42 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
 
+## Phase 0: Documentation Discovery (MANDATORY)
+
+**Before mapping files or writing a single task, verify that every API, library method, and framework feature referenced in the spec actually exists.**
+
+This is the most common source of plan failure: tasks that reference `library.method()` that doesn't exist, parameters that were deprecated, or internal utilities at wrong paths. A plan built on phantom APIs fails at execution time, not at review time.
+
+### Discovery Checklist
+
+For each external dependency in the spec:
+- [ ] Confirm the package is in `package.json` / `pyproject.toml` / `go.mod`
+- [ ] Confirm the method/class name in docs or source (not assumed from memory)
+- [ ] Confirm the import path (barrel re-exports, named vs default, casing)
+
+For each internal utility referenced:
+- [ ] Verify the file path exists
+- [ ] Verify the function/type is exported (grep the file)
+- [ ] Verify the parameter signature matches what the plan will use
+
+### Anti-Patterns — Stop Planning If You Encounter These
+
+- "We'll figure out the exact API when implementing" → find the API now
+- Referencing `library.method()` without verifying it in docs → look it up
+- Using an internal function without grepping for its actual name → grep first
+- Planning around a feature from memory without confirming it's in this version → check
+
+### If a Required API Doesn't Exist
+
+Options in order:
+1. Find the correct API that does what the spec needs
+2. Plan an implementation of the missing utility as a prerequisite task
+3. Flag the spec gap to the user before writing the plan
+
+**Never plan around a phantom API and hope the implementer figures it out.**
+
+---
+
 ## Scope Check
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.

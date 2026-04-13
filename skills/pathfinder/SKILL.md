@@ -18,6 +18,29 @@ Unfamiliar codebases have hidden conventions, undocumented constraints, landmine
 
 **Announce at start:** "Running PATHFINDER to map this codebase before writing code."
 
+## Progressive Depth Strategy
+
+Always explore at the shallowest level first. Only go deeper when shallow confirms relevance. Reading full files speculatively wastes context budget — a 500-line file read prematurely costs 10x more than a 50-line header read.
+
+```
+Depth 1 — Directory listing (cheapest):
+  Understand shape of the codebase. Know what exists.
+
+Depth 2 — File headers (30-50 lines):
+  Imports, exports, top-level declarations reveal purpose.
+  Decide if deeper read is warranted.
+
+Depth 3 — Function signatures (grep for exports/defs):
+  Confirm the file owns what you need before reading the body.
+
+Depth 4 — Full source (expensive, use sparingly):
+  Only for files confirmed relevant at Depth 2-3.
+  For files >100 lines: require Depth 2 confirmation first.
+  For files >300 lines: require Depth 3 confirmation first.
+```
+
+**Rule:** Never full-read a file >100 lines in the first pass. Read headers, confirm relevance, then go deep.
+
 **When to use:**
 - First time working in a project
 - Returning after > 2 weeks away

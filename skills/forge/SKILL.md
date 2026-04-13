@@ -32,6 +32,45 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
 
+## Verify APIs Before Writing Tests
+
+**Before writing any test that references an external API, library method, or internal function — verify it exists.**
+
+Writing a test against an invented interface is worse than writing no test. It creates:
+- False confidence (test "passes" because it tests a phantom)
+- Discovery failure at implementation time instead of planning time
+- A broken test suite that misleads future developers
+
+### Verification Steps (Required)
+
+For any external library call in the test:
+```bash
+# Confirm the import path exists in node_modules
+ls node_modules/<pkg>/dist/ | grep <module>
+
+# Confirm the method signature in type definitions
+grep -r "methodName" node_modules/<pkg>/dist/index.d.ts
+```
+
+For any internal function in the test:
+```bash
+# Confirm the export exists
+grep -n "export.*functionName\|module.exports" path/to/file.ts
+```
+
+**Red flag:** If you cannot find the function in source or types, the test is guessing. Stop. Verify the correct API first.
+
+### Anti-Patterns
+
+| Pattern | Problem |
+|---|---|
+| `import { method } from 'lib'` without checking types | Invented import |
+| `expect(result.property)` without checking the return type | Invented shape |
+| Using a function signature from memory | May be wrong version |
+| "The implementer will wire it up" | Test is untethered |
+
+---
+
 ## The Iron Law
 
 ```

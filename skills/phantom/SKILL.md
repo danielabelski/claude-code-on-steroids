@@ -238,6 +238,8 @@ Done!
 
 **Never:**
 - Start implementation on main/master branch without explicit user consent
+- Let an implementer improvise around a missing API — if the plan references a non-existent method, escalate to blueprint revision, not creative substitution
+- Accept "I used a similar API instead" as a resolution — the spec must be updated first
 - Skip reviews (spec compliance OR code quality)
 - Proceed with unfixed issues
 - Dispatch multiple implementation subagents in parallel (conflicts)

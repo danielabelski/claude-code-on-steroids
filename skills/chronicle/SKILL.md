@@ -20,28 +20,7 @@ This skill adds **self-learning capability** to Superpowers. After each task, yo
 
 ## The Learning Loop
 
-```dot
-digraph learning_loop {
-    rankdir=LR;
-
-    start [label="Start task", shape=ellipse];
-    search [label="1. Search\nReasoningBank", shape=box];
-    review [label="2. Review\nmatches", shape=box];
-    apply [label="3. Apply\npatterns", shape=box];
-    execute [label="4. Execute\ntask", shape=box];
-    extract [label="5. Extract\npattern", shape=box];
-    store [label="6. Store in\nReasoningBank", shape=box];
-    end [label="End", shape=ellipse];
-
-    start -> search;
-    search -> review;
-    review -> apply;
-    apply -> execute;
-    execute -> extract;
-    extract -> store;
-    store -> end;
-}
-```
+1. Search ReasoningBank → 2. Review matches → 3. Apply patterns → 4. Execute task → 5. Extract pattern → 6. Store in ReasoningBank
 
 ## Phase 1: Pre-Task Pattern Retrieval
 

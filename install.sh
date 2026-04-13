@@ -60,7 +60,7 @@ CLAUDE_HOME="${HOME}/.claude"
 PLUGINS_BASE="${CLAUDE_HOME}/plugins/cache/claude-plugins-official"
 
 # Try to find existing superpowers installation
-EXISTING_SP=$(find "$PLUGINS_BASE" -maxdepth 2 -name "SKILL.md" -path "*/using-superpowers/*" 2>/dev/null | head -1)
+EXISTING_SP=$(find "$PLUGINS_BASE" -maxdepth 2 -name "SKILL.md" -path "*/ascend/*" 2>/dev/null | head -1)
 
 if [[ -n "$EXISTING_SP" ]]; then
   # Found existing superpowers — install into that version's skills directory
@@ -88,25 +88,30 @@ mkdir -p "$SKILLS_DIR"
 header "Installing skills..."
 
 SKILLS=(
-  ai-engineering
-  brainstorming
-  codebase-onboarding
-  context-management
-  dispatching-parallel-agents
-  embedded-systems
-  frontend-excellence
-  learning-from-experience
-  ml-engineering
-  model-routing
-  requesting-code-review
-  subagent-driven-development
-  swarm-coordination
-  systematic-debugging
-  task-intake
-  test-driven-development
-  using-superpowers
-  verification-before-completion
-  writing-plans
+  arbiter
+  architect
+  ascend
+  blueprint
+  chronicle
+  commander
+  exodus
+  forge
+  gradient
+  horizon
+  hunter
+  ironcore
+  legion
+  nexus
+  oracle
+  pathfinder
+  phantom
+  prism
+  sculptor
+  seal
+  sentinel
+  tribunal
+  vault
+  vector
 )
 
 INSTALLED=0

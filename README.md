@@ -5,7 +5,7 @@
 24 elite skills across 5 layers: discipline, domain expertise, intelligence, coordination, and execution.
 Named for what they do — not what they are.
 
-Built and open-sourced by [GadaaLabs](https://gadaalabs.]
+Built and open-sourced by GadaaLabs
 
 ---
 
@@ -265,13 +265,6 @@ claude-code-superpowers/
 
 ---
 
-## Full Course
-
-12-lesson free course — installation through custom skills:
-
-**[gadaalabs.com/courses/claude-code-superpowers](https://gadaalabs.com/courses/claude-code-superpowers)**
-
----
 
 ## Contributing
 
@@ -285,4 +278,3 @@ New domain skills needed: DevOps/Kubernetes, security engineering, data engineer
 
 MIT — use freely, modify freely, share freely.
 
-Built with care by [GadaaLabs](https://gadaalabs.com).

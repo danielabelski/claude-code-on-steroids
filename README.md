@@ -1,11 +1,11 @@
-# Claude Code Superpowers
+# Claude Code Beast Mode
 
 **Turn Claude Code from a reactive assistant into a proactive engineering partner.**
 
 24 elite skills across 5 layers: discipline, domain expertise, intelligence, coordination, and execution.
 Named for what they do — not what they are.
 
-Built and open-sourced by [GadaaLabs](https://gadaalabs.com) · [Full course →](https://gadaalabs.com/courses/claude-code-superpowers)
+Built and open-sourced by [GadaaLabs](https://gadaalabs.]
 
 ---
 

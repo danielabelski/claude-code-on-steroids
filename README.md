@@ -20,6 +20,12 @@ curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/m
 
 ---
 
+[![Token Burn Comparison Dashboard](https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/docs/charts-token-burn.png)](https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/docs/charts-full.png)
+
+> Click the image for the full dashboard. [View interactive HTML version →](https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/docs/dashboard.html)
+
+---
+
 ## How This Compares to the Original
 
 | | [obra/superpowers](https://github.com/obra/superpowers) | **Claude Code on Steroids** |

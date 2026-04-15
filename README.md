@@ -40,6 +40,7 @@ curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/m
 | Domain trigger system | ✗ | **13 scenario → skill mappings** |
 | Override protection | ✗ | ✓ **100% update survivability** |
 | One-command install | ✗ | ✓ |
+| Token usage analytics | ✗ | ✓ **/tokenburn** |
 
 ---
 
@@ -152,12 +153,42 @@ LONG SESSION → horizon → continue or fresh handoff
 
 ---
 
+## Token Analytics — /tokenburn
+
+Every install includes a built-in cost dashboard. Run it any time inside Claude Code:
+
+```
+/tokenburn          # today's usage (default)
+/tokenburn week     # last 7 days
+/tokenburn 30d      # last 30 days
+/tokenburn month    # this calendar month
+```
+
+It reads your local `~/.claude/projects/**/*.jsonl` session logs — no external calls, no accounts — and shows a full breakdown:
+
+| Section | What it shows |
+|---|---|
+| **By Day** | Cost + message count per day, last 10 days |
+| **By Project** | Cost ranked by working directory |
+| **By Activity** | Coding / Debugging / Delegation / Testing / Build / Exploration / Conversation |
+| **By Model** | Cost + call count — Sonnet, Haiku, Opus (uses real per-model pricing) |
+| **Core Tools** | How many times each Claude tool was called (Bash, Read, Edit, Write…) |
+| **Shell Commands** | Top bash commands by frequency (git, npm, grep…) |
+| **MCP Servers** | Any MCP tool usage |
+
+Everything is rendered with color-coded bar charts directly in your terminal.
+
+[![Token Burn Comparison Dashboard](https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/docs/charts-token-burn.png)](https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/docs/charts-full.png)
+
+---
+
 ## Quick Start After Install
 
 ```bash
 cd your-project && claude
 
 /oracle        # Start every non-trivial task here
+/tokenburn     # See where your tokens are actually going
 /gradient      # ML work
 /nexus         # RAG / agent work
 /hunter        # Hard debugging

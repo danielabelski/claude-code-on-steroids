@@ -2,24 +2,31 @@
 description: "Show a full token & cost analytics dashboard — by day, project, model, activity, tools, and shell commands"
 ---
 
-Tell the user to run this command directly in their Claude Code prompt (the `!` prefix runs it in the real terminal with full color support):
+Run the appropriate command below based on the user's argument. This opens the full colorful interactive TokenBurn dashboard in a native terminal window (required because Claude Code's output panel strips all ANSI colors).
 
-For the period they requested, give them the exact command to type:
-
-- No args or `week`  → `! tokenburn report --period week`
-- `today`            → `! tokenburn report --period today`
-- `30d` or `30days`  → `! tokenburn report --period 30days`
-- `month`            → `! tokenburn report --period month`
+Replace PERIOD in the command based on the user's argument:
+- No args or `week`  → `week`
+- `today`            → `today`
+- `30d` or `30days`  → `30days`
+- `month`            → `month`
 
 Default when no argument given: `week`
 
-Tell them: **Type this in your Claude Code prompt** (not as a message to Claude — type it directly into the prompt bar and press Enter):
+**Step 1 — Open the dashboard in a native terminal window:**
 
-```
-! tokenburn report --period week
+```bash
+osascript -e 'tell app "Terminal" to do script "COLUMNS=120 tokenburn report --period PERIOD"'
 ```
 
-Explain that the `!` prefix runs commands directly in the terminal with full TTY support, which is what gives tokenburn its colors and layout. Running it through Claude's Bash tool strips the colors.
+**Step 2 — Tell the user:**
+
+> TokenBurn opened in a new terminal window with full colors and interactive controls.
+> Use `1` today · `2` week · `3` 30 days · `4` month · `p` switch provider · `q` quit
+
+If `osascript` fails (non-macOS), fall back to this and tell the user to run it directly in their terminal:
+```
+COLUMNS=120 FORCE_COLOR=1 tokenburn report --period PERIOD 2>&1 | cat
+```
 
 If `tokenburn` is not found, tell the user:
 "tokenburn is not installed. Re-run the installer: `bash ~/.claude/plugins/superpowers-overrides/install.sh`"

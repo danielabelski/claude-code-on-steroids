@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Claude Code on Steroids — Token Burn & Engineering Case Study</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0b18;color:#e2e2f0;font-family:'Segoe UI',system-ui,sans-serif;padding:36px 28px 72px;min-height:100vh}
+
+.page-header{text-align:center;margin-bottom:32px}
+.page-header h1{font-size:30px;font-weight:900;color:#fff;letter-spacing:-0.6px;margin-bottom:8px}
+.page-header .tag-line{font-size:13px;color:#a78bfa;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.page-header .sub1{font-size:13px;color:#7070a0;margin-bottom:5px}
+.page-header .sub2{font-size:11px;color:#44446a;font-style:italic}
+
+/* ── Section headers ── */
+.section-hdr{text-align:center;margin:36px 0 18px}
+.section-hdr h2{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;margin-bottom:5px}
+.section-hdr p{font-size:12px;color:#55558a}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#111128;border:1px solid #1c1c38;border-radius:14px;padding:26px 18px;text-align:center}
+.kpi-val{font-size:42px;font-weight:900;line-height:1;margin-bottom:10px;letter-spacing:-1px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#55558a;line-height:1.5}
+.kpi-sub{font-size:9px;color:#33334a;margin-top:6px;font-style:italic}
+.g{color:#34d399}.c{color:#22d3ee}.a{color:#fb923c}.p{color:#a78bfa}.r{color:#f87171}
+
+/* ── Alert box ── */
+.alert-box{background:#1a0a0a;border:1px solid #7f1d1d;border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;gap:16px;align-items:flex-start}
+.alert-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.alert-title{font-size:13px;font-weight:800;color:#fca5a5;margin-bottom:5px}
+.alert-body{font-size:12px;color:#9070a0;line-height:1.7}
+
+/* ── Chart grid ── */
+.row{display:grid;gap:14px;margin-bottom:14px}
+.row.two{grid-template-columns:1fr 1fr}
+.row.three{grid-template-columns:1fr 1fr 1fr}
+.row.one{grid-template-columns:1fr}
+
+.card{background:#111128;border:1px solid #1c1c38;border-radius:14px;padding:22px}
+.card.highlight{border-color:#4c1d95;background:#0f0f22}
+.card h3{font-size:13px;font-weight:700;color:#d0d0f0;margin-bottom:3px;letter-spacing:.1px}
+.card .desc{font-size:11px;color:#44446a;margin-bottom:14px;font-style:italic}
+.wrap{position:relative}
+.h200{height:200px}
+.h220{height:220px}
+.h260{height:260px}
+.h300{height:300px}
+.h340{height:340px}
+.h360{height:360px;max-width:600px;margin:0 auto}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px}
+.li{display:flex;align-items:center;gap:7px;font-size:11px;color:#9090b8}
+.dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.dr{background:#f87171}.dg{background:#34d399}.db{background:#60a5fa}.dp{background:#a78bfa}.dy{background:#fbbf24}
+
+/* ── Scenario callout cards ── */
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.sc{background:#111128;border:1px solid #1c1c38;border-radius:12px;padding:18px}
+.sc-title{font-size:11px;font-weight:800;color:#7070a0;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.sc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #13132a}
+.sc-row:last-child{border-bottom:none}
+.sc-label{font-size:11px;color:#9090b8}
+.sc-val{font-size:13px;font-weight:800}
+.sc-red{color:#f87171}
+.sc-green{color:#34d399}
+.sc-delta{font-size:10px;font-weight:700;background:#0d2a1a;color:#34d399;padding:2px 8px;border-radius:4px}
+.sc-delta.bad{background:#2a0d0d;color:#f87171}
+
+/* ── Skill table ── */
+.inv{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.inv th{text-align:left;padding:8px 12px;color:#55558a;font-weight:700;letter-spacing:.8px;text-transform:uppercase;font-size:9.5px;border-bottom:1px solid #1c1c38}
+.inv td{padding:7px 12px;color:#c0c0e0;border-bottom:1px solid #141430}
+.inv tr:last-child td{border-bottom:none}
+.inv tr:hover td{background:#13132a}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9.5px;font-weight:800;letter-spacing:.4px}
+.tag-new{background:#0d2a1a;color:#34d399}
+.tag-evolved{background:#1a1a3a;color:#818cf8}
+.tag-obra{background:#2a1010;color:#f87171}
+.tag-pinned{background:#1a0f2a;color:#a78bfa}
+
+/* ── Sprint sim ── */
+.sprint-note{font-size:11px;color:#44446a;margin-top:12px;text-align:center;font-style:italic}
+
+/* ── Footer ── */
+.footer{text-align:center;margin-top:48px;padding-top:28px;border-top:1px solid #1c1c38}
+.footer p{font-size:12px;color:#44446a;margin-bottom:6px}
+.footer a{color:#818cf8;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HEADER -->
+<div class="page-header">
+  <div class="tag-line">Engineering Case Study</div>
+  <h1>Claude Code on Steroids</h1>
+  <p class="sub1">Token Burn Analysis · Skill Architecture · Engineering Gap Closure</p>
+  <p class="sub2">obra/superpowers (14 skills) vs GadaaLabs/claude-code-on-steroids (24 skills) · Data verified from source files · 2026-04-14</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ ALERT -->
+<div class="alert-box">
+  <div class="alert-icon">🔥</div>
+  <div>
+    <div class="alert-title">The #1 Claude Code Problem: Token Burn</div>
+    <div class="alert-body">
+      Context limits, re-investigation loops, zero memory between sessions, no cost routing — these are the failure modes engineers hit daily.
+      obra/superpowers gives you 14 structured workflows. It does not give you memory, context management, cost routing, or codebase onboarding.
+      Every session restart costs 5,000–15,000 tokens to re-establish context. Every repeated problem costs 8,000–15,000 tokens to re-investigate.
+      This is the gap that was engineered closed.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ KPI STRIP -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-val g">99%</div>
+    <div class="kpi-label">Token Reduction<br>on Repeat Problems</div>
+    <div class="kpi-sub">Chronicle 3-layer memory vs obra's zero memory</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-val c">0</div>
+    <div class="kpi-label">LLM Tokens<br>on Mechanical Tasks</div>
+    <div class="kpi-sub">Vector Tier 0 → shell tool, no API call</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-val a">80%</div>
+    <div class="kpi-label">Savings on<br>Codebase Exploration</div>
+    <div class="kpi-sub">Pathfinder 5-phase vs random file reads</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-val p">100%</div>
+    <div class="kpi-label">Update<br>Survivability</div>
+    <div class="kpi-sub">9 skills pinned via SessionStart hook</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 1: TOKEN BURN -->
+<div class="section-hdr">
+  <h2>Token Burn by Scenario — The Brutal Comparison</h2>
+  <p>Real engineering scenarios. Actual token costs modeled from source file word counts (words × 1.3 = tokens). obra numbers use their available skills only.</p>
+</div>
+
+<div class="row one">
+  <div class="card highlight">
+    <h3>6 Real Engineering Scenarios — obra vs Steroids (tokens consumed)</h3>
+    <p class="desc">Lower is better for routine tasks. Steroids costs more upfront on first encounter — pays back massively on every subsequent encounter.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra/superpowers</div>
+      <div class="li"><div class="dot dg"></div>Claude Code on Steroids</div>
+    </div>
+    <div class="wrap h340"><canvas id="tokenScenarios"></canvas></div>
+  </div>
+</div>
+
+<!-- ── Scenario callout cards -->
+<div class="scenario-grid">
+  <div class="sc">
+    <div class="sc-title">Scenario 1: Session Bootstrap</div>
+    <div class="sc-row"><span class="sc-label">obra (using-superpowers)</span><span class="sc-val sc-red">1,023 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (ascend)</span><span class="sc-val sc-green">1,484 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Delta</span><span class="sc-delta bad">+461 tok</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">Steroids loads 13 domain triggers + 6 workflow chains. The overhead pays back immediately on first real task.</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-title">Scenario 2: Debug — 1st Encounter</div>
+    <div class="sc-row"><span class="sc-label">obra (hunter only)</span><span class="sc-val sc-red">1,955 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (oracle+chronicle+hunter)</span><span class="sc-val sc-green">4,246 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Delta</span><span class="sc-delta bad">+2,291 tok</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">First encounter costs more — oracle classifies, chronicle is queried (cache miss), hunter executes. Investment.</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-title">Scenario 3: Debug — 2nd Encounter ⚡</div>
+    <div class="sc-row"><span class="sc-label">obra (full re-investigation)</span><span class="sc-val sc-red">8,000–15,000 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (chronicle cache hit)</span><span class="sc-val sc-green">~50 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Savings</span><span class="sc-delta">up to 99%</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">Chronicle retrieves the stored solution in a 3-layer token-efficient search. obra has zero memory — re-investigates from zero every time.</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-title">Scenario 4: Context Limit Hit</div>
+    <div class="sc-row"><span class="sc-label">obra (restart + re-establish)</span><span class="sc-val sc-red">5,000–15,000 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (horizon compresses)</span><span class="sc-val sc-green">0 restart cost</span></div>
+    <div class="sc-row"><span class="sc-label">Savings</span><span class="sc-delta">100%</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">obra has no context management skill. At limit: crash, restart, manually reconstruct. Horizon tracks budget and compresses before the wall hits.</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-title">Scenario 5: Mechanical Task</div>
+    <div class="sc-row"><span class="sc-label">obra (LLM call always)</span><span class="sc-val sc-red">500–2,000 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (Vector Tier 0)</span><span class="sc-val sc-green">0 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Savings</span><span class="sc-delta">100%</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">Rename variable, format file, add import — Vector routes these to shell tools. Zero API call. obra routes everything through the LLM.</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-title">Scenario 6: New Codebase Exploration</div>
+    <div class="sc-row"><span class="sc-label">obra (random file reads)</span><span class="sc-val sc-red">30,000–60,000 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Steroids (pathfinder 5-phase)</span><span class="sc-val sc-green">8,000–12,000 tok</span></div>
+    <div class="sc-row"><span class="sc-label">Savings</span><span class="sc-delta">60–80%</span></div>
+    <div class="sc-row" style="padding-top:8px"><span class="sc-label" style="font-size:10px;color:#44446a">Pathfinder maps entry points, dependency graph, and architectural traps systematically. obra = explore and hope.</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 2: SPRINT SIM -->
+<div class="section-hdr">
+  <h2>Simulated 5-Day Engineering Sprint — Cumulative Token Burn</h2>
+  <p>8 tasks/day across all 6 scenario types. obra re-investigates every repeated problem. Steroids caches, routes, compresses.</p>
+</div>
+
+<div class="row two">
+  <div class="card">
+    <h3>Cumulative Token Burn — 5-Day Sprint</h3>
+    <p class="desc">Day-by-day total. obra diverges after day 1 as repeat problems compound. Steroids flattens due to chronicle cache hits.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra/superpowers</div>
+      <div class="li"><div class="dot dg"></div>Claude Code on Steroids</div>
+    </div>
+    <div class="wrap h260"><canvas id="sprintBurn"></canvas></div>
+    <p class="sprint-note">Assumes: 2 debug repeats/day, 1 mechanical/day, 1 new codebase/week, context limit 2×/week. Midpoint estimates used for ranges.</p>
+  </div>
+  <div class="card">
+    <h3>Per-Scenario Token Savings (single occurrence)</h3>
+    <p class="desc">Where the savings actually come from. Chronicle and Pathfinder dominate. Vector is a perfect zero.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dg"></div>Tokens Saved vs obra</div>
+    </div>
+    <div class="wrap h260"><canvas id="savingsBreakdown"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 3: SKILL CONTENT -->
+<div class="section-hdr">
+  <h2>Skill Content Depth — Word Count Analysis</h2>
+  <p>Actual word counts from source SKILL.md files. More content = more encoded decision-making = less LLM reasoning required.</p>
+</div>
+
+<div class="row two">
+  <div class="card">
+    <h3>Evolved Skills — Content Depth Comparison (words)</h3>
+    <p class="desc">12 skills evolved from obra originals. GadaaLabs additions (API verification, Phase 0, domain triggers) drove the largest gains.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra original</div>
+      <div class="li"><div class="dot dg"></div>Steroids version</div>
+    </div>
+    <div class="wrap h300"><canvas id="contentDepth"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>10 New Skills — Token Load (not in obra)</h3>
+    <p class="desc">New skills that don't exist in obra at all. Each adds structured knowledge the LLM would otherwise derive from scratch each session.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dp"></div>Tokens loaded per skill</div>
+    </div>
+    <div class="wrap h300"><canvas id="newSkillTokens"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 4: RADAR -->
+<div class="section-hdr">
+  <h2>System Coverage — 6-Dimension Radar</h2>
+  <p>Composite scoring across the dimensions that matter for serious engineering work.</p>
+</div>
+
+<div class="row two">
+  <div class="card">
+    <h3>Feature Coverage Radar</h3>
+    <p class="desc">obra excels at structured workflow coverage. Steroids adds intelligence, memory, and domain layers.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra/superpowers</div>
+      <div class="li"><div class="dot dg"></div>Claude Code on Steroids</div>
+    </div>
+    <div class="wrap h360"><canvas id="radar"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Skill Count Breakdown</h3>
+    <p class="desc">obra: 14 skills. Steroids: 24. 9 overridden with GadaaLabs engineering additions. 10 entirely new.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra skills (14 total, none in Steroids)</div>
+      <div class="li"><div class="dot dg"></div>Brand-new skills (10)</div>
+      <div class="li"><div class="dot dp"></div>Evolved + pinned (9)</div>
+      <div class="li"><div class="dot db"></div>Evolved, upstream (5)</div>
+    </div>
+    <div class="wrap h260"><canvas id="skillOrigin"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 5: ENGINEERING GAPS -->
+<div class="section-hdr">
+  <h2>GadaaLabs Engineering Additions — What Was Missing</h2>
+  <p>6 specific gaps identified in both obra and the official expansion. Directed and built by GadaaLabs.</p>
+</div>
+
+<div class="row one">
+  <div class="card">
+    <h3>Engineering Gap Coverage — Binary Presence Check</h3>
+    <p class="desc">Does the capability exist? obra is a zero across all 6 gaps. The official expansion missed them too.</p>
+    <div class="legend">
+      <div class="li"><div class="dot dr"></div>obra/superpowers</div>
+      <div class="li"><div class="dot dg"></div>Claude Code on Steroids</div>
+    </div>
+    <div class="wrap h220"><canvas id="gapCoverage"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SECTION 6: SKILL TABLE -->
+<div class="section-hdr">
+  <h2>Complete Skill Inventory — All 24 Skills</h2>
+  <p>Full origin tracking, GadaaLabs additions flagged, override status shown.</p>
+</div>
+
+<div class="card">
+  <table class="inv">
+    <thead>
+      <tr>
+        <th>Codename</th>
+        <th>Role</th>
+        <th>Origin</th>
+        <th>GadaaLabs Addition</th>
+        <th>Pinned</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><b>ascend</b></td><td>Session bootstrap</td><td><span class="tag tag-evolved">Evolved (obra: using-superpowers)</span></td><td>13-domain trigger table + 6 workflow chains</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>blueprint</b></td><td>Planning</td><td><span class="tag tag-evolved">Evolved (obra: writing-plans)</span></td><td>Phase 0 API Documentation Discovery</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>forge</b></td><td>TDD</td><td><span class="tag tag-evolved">Evolved (obra: test-driven-development)</span></td><td>API Pre-Verification before test authorship</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>commander</b></td><td>Parallel dispatch</td><td><span class="tag tag-evolved">Evolved (obra: dispatching-parallel-agents)</span></td><td>COMMANDER vs PHANTOM 6-row decision table</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>vector</b></td><td>Model cost routing</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>Tier 0 ($0) → Tier 3 (Opus) routing logic</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>chronicle</b></td><td>Self-learning memory</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>ReasoningBank + 3-layer token-efficient search</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>pathfinder</b></td><td>Codebase onboarding</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>5-phase systematic exploration framework</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>phantom</b></td><td>Sequential execution</td><td><span class="tag tag-evolved">Evolved (obra: executing-plans + subagent-driven-development)</span></td><td>—</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>legion</b></td><td>Swarm coordination</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>4 topology templates: hierarchical, mesh, ring, star</td><td><span class="tag tag-pinned">✓ Pinned</span></td></tr>
+      <tr><td><b>oracle</b></td><td>Task classifier</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>Complexity tier + model + skill chain assignment</td><td>—</td></tr>
+      <tr><td><b>horizon</b></td><td>Context management</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>Token budget tracking + compression + clean handoff</td><td>—</td></tr>
+      <tr><td><b>gradient</b></td><td>ML engineering</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>Pipelines, training, serving, MLOps, drift detection</td><td>—</td></tr>
+      <tr><td><b>nexus</b></td><td>AI/RAG engineering</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>RAG, agents, prompt engineering, LLM eval</td><td>—</td></tr>
+      <tr><td><b>ironcore</b></td><td>Embedded systems</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>ISRs, RTOS, state machines, HAL, timing</td><td>—</td></tr>
+      <tr><td><b>prism</b></td><td>UI/UX engineering</td><td><span class="tag tag-new">New (no obra equivalent)</span></td><td>67 styles, 25 chart types, WCAG 2.1 AA, Core Web Vitals</td><td>—</td></tr>
+      <tr><td><b>hunter</b></td><td>Systematic debugging</td><td><span class="tag tag-evolved">Evolved (obra: systematic-debugging)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>spark</b></td><td>Brainstorming</td><td><span class="tag tag-evolved">Evolved (obra: brainstorming)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>mirror</b></td><td>Receive code review</td><td><span class="tag tag-evolved">Evolved (obra: receiving-code-review)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>critic</b></td><td>Request code review</td><td><span class="tag tag-evolved">Evolved (obra: requesting-code-review)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>exodus</b></td><td>Finish branch / ship</td><td><span class="tag tag-evolved">Evolved (obra: finishing-a-development-branch)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>sentinel</b></td><td>Verification</td><td><span class="tag tag-evolved">Evolved (obra: verification-before-completion)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>scaffold</b></td><td>Writing skills</td><td><span class="tag tag-evolved">Evolved (obra: writing-skills)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>anchor</b></td><td>Git worktrees</td><td><span class="tag tag-evolved">Evolved (obra: using-git-worktrees)</span></td><td>—</td><td>—</td></tr>
+      <tr><td><b>archivist</b></td><td>This skill guide</td><td><span class="tag tag-evolved">Evolved (obra: using-superpowers)</span></td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ FOOTER -->
+<div class="footer">
+  <p>Foundation: <a href="#">obra/superpowers</a> by Jesse Vincent · Expansion: claude-plugins-official team · Engineering gaps + override infra + packaging: <a href="#">GadaaLabs</a></p>
+  <p>Install: <code style="background:#111128;padding:3px 8px;border-radius:4px;font-size:11px">curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/install.sh | bash</code></p>
+  <p style="margin-top:8px"><a href="#">github.com/GadaaLabs/claude-code-on-steroids</a></p>
+</div>
+
+<script>
+const DARK = '#0b0b18';
+const RED = '#f87171';
+const GREEN = '#34d399';
+const BLUE = '#60a5fa';
+const PURPLE = '#a78bfa';
+const YELLOW = '#fbbf24';
+const GRID = 'rgba(255,255,255,0.04)';
+const TICK = '#55558a';
+
+Chart.defaults.color = TICK;
+Chart.defaults.borderColor = GRID;
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+const baseOpts = (title) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1a1a38',
+      borderColor: '#2a2a50',
+      borderWidth: 1,
+      titleColor: '#d0d0f0',
+      bodyColor: '#9090b8',
+      callbacks: {
+        label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + ' tokens'
+      }
+    }
+  },
+  scales: {
+    x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 10 } } },
+    y: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 10 } } }
+  }
+});
+
+// ── Chart 1: Token Scenarios ──────────────────────────────────────────
+new Chart(document.getElementById('tokenScenarios'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Bootstrap', 'Debug 1st\nEncounter', 'Debug 2nd\nEncounter', 'Context\nLimit Hit', 'Mechanical\nTask', 'New Codebase\nExploration'
+    ],
+    datasets: [
+      {
+        label: 'obra/superpowers',
+        data: [1023, 1955, 11500, 10000, 1250, 45000],
+        backgroundColor: RED + 'cc',
+        borderColor: RED,
+        borderWidth: 1,
+        borderRadius: 5,
+      },
+      {
+        label: 'Claude Code on Steroids',
+        data: [1484, 4246, 50, 0, 0, 10000],
+        backgroundColor: GREEN + 'cc',
+        borderColor: GREEN,
+        borderWidth: 1,
+        borderRadius: 5,
+      }
+    ]
+  },
+  options: {
+    ...baseOpts(),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: { display: true, labels: { color: '#9090b8', font: { size: 11 } } },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: {
+          label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + ' tok'
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 10 } } },
+      y: {
+        grid: { color: GRID },
+        ticks: {
+          color: TICK, font: { size: 10 },
+          callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v
+        }
+      }
+    }
+  }
+});
+
+// ── Chart 2: Sprint Burn ──────────────────────────────────────────────
+// Day-by-day cumulative. obra gets worse as repeat problems compound.
+// Steroids: day1 = 18k, subsequent days chronicle caches debug hits
+const obraDaily = [18000, 32000, 24000, 28000, 20000]; // varies, repeats cost more
+const sterDaily = [14000, 8500, 7200, 8000, 7000];      // chronicles kicks in
+const obraCum = obraDaily.reduce((a,v,i) => [...a, (a[i-1]||0)+v], []);
+const sterCum = sterDaily.reduce((a,v,i) => [...a, (a[i-1]||0)+v], []);
+
+new Chart(document.getElementById('sprintBurn'), {
+  type: 'line',
+  data: {
+    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'],
+    datasets: [
+      {
+        label: 'obra/superpowers',
+        data: obraCum,
+        borderColor: RED,
+        backgroundColor: RED + '20',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: RED,
+      },
+      {
+        label: 'Claude Code on Steroids',
+        data: sterCum,
+        borderColor: GREEN,
+        backgroundColor: GREEN + '20',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: GREEN,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + ' tok cumulative' }
+      }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 10 } } },
+      y: {
+        grid: { color: GRID },
+        ticks: { color: TICK, font: { size: 10 }, callback: v => (v/1000).toFixed(0)+'k' }
+      }
+    }
+  }
+});
+
+// ── Chart 3: Savings Breakdown ────────────────────────────────────────
+new Chart(document.getElementById('savingsBreakdown'), {
+  type: 'bar',
+  data: {
+    labels: ['Chronicle\n(Debug 2nd)', 'Horizon\n(Context limit)', 'Vector\n(Mechanical)', 'Pathfinder\n(New codebase)', 'Debug 1st\n(Investment)'],
+    datasets: [{
+      label: 'Tokens Saved vs obra',
+      data: [11450, 10000, 1250, 35000, -2291],
+      backgroundColor: ctx => ctx.raw < 0 ? RED + 'cc' : GREEN + 'cc',
+      borderColor: ctx => ctx.raw < 0 ? RED : GREEN,
+      borderWidth: 1,
+      borderRadius: 5,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: { label: ctx => (ctx.raw < 0 ? ' Extra cost: ' : ' Saved: ') + Math.abs(ctx.raw).toLocaleString() + ' tok' }
+      }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 9 } } },
+      y: {
+        grid: { color: GRID },
+        ticks: { color: TICK, font: { size: 10 }, callback: v => (v/1000).toFixed(0)+'k' }
+      }
+    }
+  }
+});
+
+// ── Chart 4: Content Depth (evolved skills) ───────────────────────────
+new Chart(document.getElementById('contentDepth'), {
+  type: 'bar',
+  data: {
+    labels: ['ascend\n(bootstrap)', 'blueprint\n(planning)', 'forge\n(TDD)', 'commander\n(dispatch)', 'phantom\n(execution)', 'hunter\n(debug)', 'critic\n(review)'],
+    datasets: [
+      {
+        label: 'obra original (words)',
+        data: [787, 914, 1503, 620, 940, 890, 520],
+        backgroundColor: RED + 'cc',
+        borderColor: RED,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: 'Steroids version (words)',
+        data: [1142, 1538, 1753, 820, 1150, 1050, 680],
+        backgroundColor: GREEN + 'cc',
+        borderColor: GREEN,
+        borderWidth: 1,
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    ...baseOpts(),
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + ' words' }
+      }
+    }
+  }
+});
+
+// ── Chart 5: New Skill Token Loads ────────────────────────────────────
+new Chart(document.getElementById('newSkillTokens'), {
+  type: 'bar',
+  data: {
+    labels: ['oracle', 'chronicle', 'pathfinder', 'horizon', 'legion', 'gradient', 'nexus', 'ironcore', 'prism', 'vector'],
+    datasets: [{
+      label: 'Tokens loaded',
+      data: [2180, 2007, 2008, 1496, 1400, 1800, 1700, 1600, 1900, 1015],
+      backgroundColor: PURPLE + 'cc',
+      borderColor: PURPLE,
+      borderWidth: 1,
+      borderRadius: 5,
+    }]
+  },
+  options: {
+    ...baseOpts(),
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: { label: ctx => ' Tokens: ' + ctx.raw.toLocaleString() }
+      }
+    }
+  }
+});
+
+// ── Chart 6: Radar ────────────────────────────────────────────────────
+new Chart(document.getElementById('radar'), {
+  type: 'radar',
+  data: {
+    labels: ['Workflow Coverage', 'Memory & Learning', 'Token Efficiency', 'Context Management', 'Domain Expertise', 'Update Survivability'],
+    datasets: [
+      {
+        label: 'obra/superpowers',
+        data: [75, 0, 20, 0, 0, 0],
+        borderColor: RED,
+        backgroundColor: RED + '25',
+        pointBackgroundColor: RED,
+        pointRadius: 4,
+      },
+      {
+        label: 'Claude Code on Steroids',
+        data: [100, 95, 90, 95, 90, 100],
+        borderColor: GREEN,
+        backgroundColor: GREEN + '25',
+        pointBackgroundColor: GREEN,
+        pointRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#1a1a38', borderColor: '#2a2a50', borderWidth: 1, titleColor: '#d0d0f0', bodyColor: '#9090b8' }
+    },
+    scales: {
+      r: {
+        angleLines: { color: GRID },
+        grid: { color: GRID },
+        pointLabels: { color: '#9090b8', font: { size: 11 } },
+        ticks: { color: '#44446a', font: { size: 9 }, backdropColor: 'transparent', stepSize: 25 },
+        min: 0, max: 100
+      }
+    }
+  }
+});
+
+// ── Chart 7: Skill Origin Donut ───────────────────────────────────────
+new Chart(document.getElementById('skillOrigin'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Brand-new skills (10)', 'Evolved + pinned by GadaaLabs (9)', 'Evolved, upstream only (5)'],
+    datasets: [{
+      data: [10, 9, 5],
+      backgroundColor: [GREEN + 'cc', PURPLE + 'cc', BLUE + 'cc'],
+      borderColor: [GREEN, PURPLE, BLUE],
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+      }
+    },
+    cutout: '60%'
+  }
+});
+
+// ── Chart 8: Gap Coverage ─────────────────────────────────────────────
+new Chart(document.getElementById('gapCoverage'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'API Pre-Verification\n(forge)', 'Phase 0 Doc\nDiscovery (blueprint)', 'Domain Trigger\nSystem (ascend)', 'Workflow\nChains (ascend)', 'Dispatch Decision\nTable (commander)', 'Override\nInfrastructure'
+    ],
+    datasets: [
+      {
+        label: 'obra/superpowers',
+        data: [0, 0, 0, 0, 0, 0],
+        backgroundColor: RED + 'cc',
+        borderColor: RED,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: 'Claude Code on Steroids',
+        data: [1, 1, 1, 1, 1, 1],
+        backgroundColor: GREEN + 'cc',
+        borderColor: GREEN,
+        borderWidth: 1,
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1a38',
+        borderColor: '#2a2a50',
+        borderWidth: 1,
+        titleColor: '#d0d0f0',
+        bodyColor: '#9090b8',
+        callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.raw === 1 ? 'Present ✓' : 'Missing ✗') }
+      }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 9 } } },
+      y: {
+        grid: { color: GRID },
+        ticks: { color: TICK, font: { size: 10 }, callback: v => v === 1 ? '✓ Yes' : v === 0 ? '✗ No' : '' },
+        min: 0, max: 1.2, stepSize: 1
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

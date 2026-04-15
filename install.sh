@@ -1,157 +1,219 @@
-#!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# claude-code-on-steroids — install.sh
-# Sets up the override layer and guides you through the one Claude Code step.
-# Run: bash install.sh
-# ─────────────────────────────────────────────────────────────────────────────
+#!/usr/bin/env bash
+# Claude Code Superpowers — Installer
+# https://github.com/GadaaLabs/claude-code-on-steroids
+set -euo pipefail
 
-set -e
+# ─── Colors ──────────────────────────────────────────────────────────────────
+RESET="\033[0m"
+BOLD="\033[1m"
+GREEN="\033[32m"
+CYAN="\033[36m"
+YELLOW="\033[33m"
+RED="\033[31m"
+DIM="\033[2m"
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OVERRIDES_DIR="$HOME/.claude/plugins/superpowers-overrides"
-SETTINGS="$HOME/.claude/settings.json"
-INSTALLED_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
+info()    { echo -e "${CYAN}${BOLD}→${RESET} $*"; }
+success() { echo -e "${GREEN}${BOLD}✓${RESET} $*"; }
+warn()    { echo -e "${YELLOW}${BOLD}!${RESET} $*"; }
+error()   { echo -e "${RED}${BOLD}✗${RESET} $*" >&2; exit 1; }
+dim()     { echo -e "${DIM}$*${RESET}"; }
+header()  { echo -e "\n${BOLD}$*${RESET}"; }
 
-# ── Colors ───────────────────────────────────────────────────────────────────
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-RED='\033[0;31m'
-DIM='\033[2m'
-BOLD='\033[1m'
-NC='\033[0m'
-
-ok()   { echo -e "  ${GREEN}✓${NC}  $1"; }
-info() { echo -e "  ${CYAN}→${NC}  $1"; }
-warn() { echo -e "  ${YELLOW}!${NC}  $1"; }
-err()  { echo -e "  ${RED}✗${NC}  $1"; }
-hr()   { echo -e "${DIM}  ────────────────────────────────────────────${NC}"; }
-
+# ─── Banner ──────────────────────────────────────────────────────────────────
 echo ""
-echo -e "  ${BOLD}claude-code-on-steroids${NC} — installer"
-hr
-
-# ── Step 1: Check superpowers is installed ────────────────────────────────────
+echo -e "${BOLD}${CYAN}  ╔═══════════════════════════════════════╗${RESET}"
+echo -e "${BOLD}${CYAN}  ║   Claude Code on Steroids — Installer   ║${RESET}"
+echo -e "${BOLD}${CYAN}  ║        by GadaaLabs.com               ║${RESET}"
+echo -e "${BOLD}${CYAN}  ╚═══════════════════════════════════════╝${RESET}"
 echo ""
-info "Checking if superpowers plugin is installed…"
 
-SUPERPOWERS_INSTALLED=false
-if [ -f "$INSTALLED_PLUGINS" ]; then
-  INSTALL_PATH=$(python3 -c "
-import json, sys
-try:
-    data = json.load(open('$INSTALLED_PLUGINS'))
-    p = data.get('plugins', {}).get('superpowers@claude-plugins-official', [])
-    if p and p[0].get('installPath'):
-        print(p[0]['installPath'])
-except:
-    pass
-" 2>/dev/null)
+# ─── Detect install source ────────────────────────────────────────────────────
+# Support: running from cloned repo OR piped from curl
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || echo "")"
+if [[ -n "$SCRIPT_DIR" && -d "$SCRIPT_DIR/skills" ]]; then
+  SOURCE_DIR="$SCRIPT_DIR"
+  dim "Installing from local repo: $SOURCE_DIR"
+else
+  # Download from GitHub
+  info "Downloading skills from GitHub..."
+  TMP_DIR="$(mktemp -d)"
+  trap "rm -rf $TMP_DIR" EXIT
+  curl -fsSL "https://github.com/GadaaLabs/claude-code-on-steroids/archive/refs/heads/main.tar.gz" \
+    | tar -xz -C "$TMP_DIR" --strip-components=1
+  SOURCE_DIR="$TMP_DIR"
+  success "Downloaded"
+fi
 
-  if [ -n "$INSTALL_PATH" ] && [ -d "$INSTALL_PATH" ]; then
-    SUPERPOWERS_INSTALLED=true
-    ok "superpowers is installed at: ${DIM}$INSTALL_PATH${NC}"
+# ─── Check prerequisites ──────────────────────────────────────────────────────
+header "Checking prerequisites..."
+
+if ! command -v claude &>/dev/null; then
+  error "Claude Code CLI not found. Install it first:\n  npm install -g @anthropic-ai/claude-code\n  then re-run this installer."
+fi
+CLAUDE_VERSION=$(claude --version 2>/dev/null || echo "unknown")
+success "Claude Code found: $CLAUDE_VERSION"
+
+# ─── Find Claude plugins directory ───────────────────────────────────────────
+header "Locating Claude plugins directory..."
+
+CLAUDE_HOME="${HOME}/.claude"
+PLUGINS_BASE="${CLAUDE_HOME}/plugins/cache/claude-plugins-official"
+
+# Try to find existing superpowers installation
+EXISTING_SP=$(find "$PLUGINS_BASE" -maxdepth 2 -name "SKILL.md" -path "*/ascend/*" 2>/dev/null | head -1)
+
+if [[ -n "$EXISTING_SP" ]]; then
+  # Found existing superpowers — install into that version's skills directory
+  SKILLS_DIR="$(dirname "$(dirname "$(dirname "$EXISTING_SP")")")"
+  SP_VERSION="$(basename "$(dirname "$SKILLS_DIR")")"
+  success "Found existing superpowers installation (v${SP_VERSION})"
+  dim "  Target: $SKILLS_DIR"
+else
+  # No existing superpowers — create a standalone directory
+  SKILLS_DIR="${CLAUDE_HOME}/superpowers/skills"
+  warn "Superpowers plugin not found — installing as standalone"
+  dim "  Run: claude plugin install superpowers  (to get the full plugin later)"
+  dim "  Target: $SKILLS_DIR"
+
+  # Add a hook so using-superpowers loads at session start
+  HOOKS_FILE="${CLAUDE_HOME}/hooks.json"
+  if [[ ! -f "$HOOKS_FILE" ]]; then
+    echo '{"session_start": []}' > "$HOOKS_FILE"
   fi
 fi
 
-if [ "$SUPERPOWERS_INSTALLED" = false ]; then
-  warn "superpowers plugin is ${YELLOW}not installed${NC}."
-  echo ""
-  echo -e "  ${BOLD}Required first step:${NC}"
-  echo -e "  Open Claude Code and run this slash command:"
-  echo ""
-  echo -e "      ${CYAN}/plugin install superpowers@claude-plugins-official${NC}"
-  echo ""
-  echo -e "  Then re-run this installer: ${DIM}bash install.sh${NC}"
-  echo ""
-  echo -e "  ${DIM}(superpowers provides the 24 base skills."
-  echo -e "   claude-code-on-steroids overrides 9 of them with custom versions.)${NC}"
-  echo ""
-  exit 1
-fi
+mkdir -p "$SKILLS_DIR"
 
-# ── Step 2: Copy override files ───────────────────────────────────────────────
-echo ""
-info "Installing override files…"
+# ─── Install skills ───────────────────────────────────────────────────────────
+header "Installing skills..."
 
-if [ "$REPO_DIR" != "$OVERRIDES_DIR" ]; then
-  mkdir -p "$OVERRIDES_DIR"
-  cp -r "$REPO_DIR/skills"   "$OVERRIDES_DIR/"
-  cp -r "$REPO_DIR/commands" "$OVERRIDES_DIR/" 2>/dev/null || true
-  cp -r "$REPO_DIR/scripts"  "$OVERRIDES_DIR/" 2>/dev/null || true
-  cp    "$REPO_DIR/apply.sh" "$OVERRIDES_DIR/"
-  ok "Files copied to: ${DIM}$OVERRIDES_DIR${NC}"
-else
-  ok "Already in override directory: ${DIM}$OVERRIDES_DIR${NC}"
-fi
-
-# ── Step 3: Apply overrides now ───────────────────────────────────────────────
-info "Applying skill overrides…"
-bash "$OVERRIDES_DIR/apply.sh"
-ok "Overrides applied"
-
-# ── Step 4: Add SessionStart hook to settings.json ───────────────────────────
-echo ""
-info "Configuring SessionStart hook…"
-
-mkdir -p "$(dirname "$SETTINGS")"
-
-if [ ! -f "$SETTINGS" ]; then
-  echo '{}' > "$SETTINGS"
-fi
-
-python3 << PYEOF
-import json, sys, os
-
-settings_path = '$SETTINGS'
-hook_command  = 'bash \$HOME/.claude/plugins/superpowers-overrides/apply.sh'
-
-try:
-    with open(settings_path, 'r') as f:
-        settings = json.load(f)
-except:
-    settings = {}
-
-hooks = settings.setdefault('hooks', {})
-session_hooks = hooks.setdefault('SessionStart', [])
-
-# Check if hook already exists
-already_exists = any(
-    any(h.get('command') == hook_command for h in entry.get('hooks', []))
-    for entry in session_hooks
-    if isinstance(entry, dict)
+SKILLS=(
+  arbiter
+  architect
+  ascend
+  blueprint
+  chronicle
+  commander
+  exodus
+  forge
+  gradient
+  horizon
+  hunter
+  ironcore
+  legion
+  nexus
+  oracle
+  pathfinder
+  phantom
+  prism
+  sculptor
+  seal
+  sentinel
+  tribunal
+  vault
+  vector
 )
 
-if already_exists:
-    print('  hook already present — skipping')
-    sys.exit(0)
+INSTALLED=0
+UPDATED=0
 
-session_hooks.append({
-    'hooks': [{'type': 'command', 'command': hook_command}]
-})
+for skill in "${SKILLS[@]}"; do
+  SRC="${SOURCE_DIR}/skills/${skill}"
+  DEST="${SKILLS_DIR}/${skill}"
 
-with open(settings_path, 'w') as f:
-    json.dump(settings, f, indent=4)
+  if [[ ! -d "$SRC" ]]; then
+    warn "Skill not found in source: $skill (skipping)"
+    continue
+  fi
 
-print('  hook added')
-PYEOF
+  if [[ -d "$DEST" ]]; then
+    rm -rf "$DEST"
+    cp -r "$SRC" "$DEST"
+    dim "  ↺ updated: $skill"
+    ((UPDATED++))
+  else
+    cp -r "$SRC" "$DEST"
+    dim "  + installed: $skill"
+    ((INSTALLED++))
+  fi
+done
 
-ok "SessionStart hook configured in ${DIM}$SETTINGS${NC}"
+success "${INSTALLED} skills installed, ${UPDATED} updated"
 
-# ── Done ──────────────────────────────────────────────────────────────────────
+# ─── Install examples ─────────────────────────────────────────────────────────
+header "Installing examples..."
+
+EXAMPLES_DEST="${CLAUDE_HOME}/superpowers-examples"
+mkdir -p "$EXAMPLES_DEST"
+
+if [[ -d "${SOURCE_DIR}/examples" ]]; then
+  cp -r "${SOURCE_DIR}/examples/." "$EXAMPLES_DEST/"
+  success "Examples copied to $EXAMPLES_DEST"
+fi
+
+# ─── Set up memory directory ──────────────────────────────────────────────────
+header "Setting up memory system..."
+
+# The memory dir is project-specific (<hash> of project path).
+# We create a global template the user can copy per-project.
+MEMORY_TEMPLATE="${CLAUDE_HOME}/memory-template"
+mkdir -p "$MEMORY_TEMPLATE"
+
+if [[ ! -f "${MEMORY_TEMPLATE}/MEMORY.md" ]]; then
+  cat > "${MEMORY_TEMPLATE}/MEMORY.md" << 'EOF'
+# Memory Index
+# One line per memory file. Keep under 200 lines.
+# Format: - [Title](file.md) — one-line hook
+
+# Add your memories below:
+# - [User Profile](user_profile.md) — your role, expertise, preferences
+EOF
+  success "Memory template created at $MEMORY_TEMPLATE/MEMORY.md"
+  dim "  Copy to: ~/.claude/projects/<project-hash>/memory/"
+else
+  dim "  Memory template already exists"
+fi
+
+# ─── Install tokenburn (/tokenburn command + analytics script) ───────────────
+header "Installing /tokenburn..."
+
+COMMANDS_DIR="$(dirname "$SKILLS_DIR")/commands"
+SCRIPTS_DEST="${CLAUDE_HOME}/plugins/superpowers-overrides/scripts"
+
+mkdir -p "$COMMANDS_DIR" "$SCRIPTS_DEST"
+
+if [[ -f "${SOURCE_DIR}/commands/tokenburn.md" ]]; then
+  cp "${SOURCE_DIR}/commands/tokenburn.md" "${COMMANDS_DIR}/tokenburn.md"
+  success "/tokenburn command installed"
+fi
+
+if [[ -f "${SOURCE_DIR}/scripts/tokenburn.py" ]]; then
+  cp "${SOURCE_DIR}/scripts/tokenburn.py" "${SCRIPTS_DEST}/tokenburn.py"
+  chmod +x "${SCRIPTS_DEST}/tokenburn.py"
+  success "tokenburn analytics script installed"
+fi
+
+# ─── Verify installation ──────────────────────────────────────────────────────
+header "Verifying installation..."
+
+SKILL_COUNT=$(find "$SKILLS_DIR" -name "SKILL.md" | wc -l | tr -d ' ')
+PATTERN_COUNT=$(find "$SKILLS_DIR" -path "*/patterns/*.md" | wc -l | tr -d ' ')
+
+success "Installed: ${SKILL_COUNT} SKILL.md files + ${PATTERN_COUNT} pattern files"
+dim "  Skills directory: $SKILLS_DIR"
+
+# ─── Done ────────────────────────────────────────────────────────────────────
 echo ""
-hr
+echo -e "${GREEN}${BOLD}═══════════════════════════════════════════${RESET}"
+echo -e "${GREEN}${BOLD}  Installation complete!${RESET}"
+echo -e "${GREEN}${BOLD}═══════════════════════════════════════════${RESET}"
 echo ""
-echo -e "  ${GREEN}${BOLD}Installation complete!${NC}"
+echo -e "  ${BOLD}Next steps:${RESET}"
+echo -e "  1. Open your project:  ${CYAN}cd your-project && claude${RESET}"
+echo -e "  2. Run task intake:    ${CYAN}/task-intake${RESET}"
+echo -e "  3. Try a domain skill: ${CYAN}/ml-engineering${RESET}  or  ${CYAN}/ai-engineering${RESET}"
+echo -e "  4. Check token usage:  ${CYAN}/tokenburn${RESET}"
 echo ""
-echo -e "  What you have:"
-echo -e "    ${CYAN}·${NC}  superpowers (24 base skills) — installed via Claude Code plugin"
-echo -e "    ${CYAN}·${NC}  9 custom skill overrides (ascend, blueprint, chronicle, commander,"
-echo -e "       ${DIM}forge, legion, pathfinder, phantom, vector)${NC}"
-echo -e "    ${CYAN}·${NC}  ${BOLD}/tokenburn${NC} — token & cost analytics dashboard"
-echo ""
-echo -e "  The overrides re-apply automatically on every Claude Code session start,"
-echo -e "  so they survive superpowers plugin updates."
-echo ""
-echo -e "  ${DIM}Try it: open Claude Code and type ${NC}${CYAN}/tokenburn${NC}"
+echo -e "  ${DIM}Full course (free): gadaalabs.com/courses/claude-code-on-steroids${RESET}"
+echo -e "  ${DIM}Docs & issues:      github.com/GadaaLabs/claude-code-on-steroids${RESET}"
 echo ""

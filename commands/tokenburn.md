@@ -5,7 +5,7 @@ description: "Show a full token & cost analytics dashboard — by day, project, 
 Run this exact command in your Bash tool and display the output verbatim:
 
 ```
-COLUMNS=120 tokenburn report --period PERIOD 2>&1 | cat
+COLUMNS=120 FORCE_COLOR=1 tokenburn report --period PERIOD 2>&1 | cat
 ```
 
 Replace PERIOD based on the user's argument:

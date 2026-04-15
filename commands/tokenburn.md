@@ -1,25 +1,22 @@
 ---
-description: "Interactive token & cost analytics dashboard — by day, project, model, activity, tools, and MCP"
+description: "Show a full token & cost analytics dashboard — by day, project, model, activity, tools, and shell commands"
 ---
 
-Run the tokenburn analytics dashboard and display the output.
+Run this exact command in your Bash tool and display the output verbatim:
 
-Execute this command in your Bash tool:
 ```
-tokenburn report --period PERIOD
+COLUMNS=120 tokenburn report --period PERIOD 2>&1 | cat
 ```
 
-Map the user's argument to PERIOD:
-- No args, `today`          → `today`
-- `week` or `7d`           → `week`
-- `30d` or `30days`        → `30days`
-- `month`                  → `month`
+Replace PERIOD based on the user's argument:
+- No args or `today`     → `today`
+- `week` or `7d`         → `week`
+- `30d` or `30days`      → `30days`
+- `month`                → `month`
 
-Default period if nothing specified: `week`
+Default when no argument given: `week`
 
-Display the full output verbatim — do not summarize, trim, or reformat it.
+Show the full output exactly as returned — do not summarize, trim, reformat, or add commentary.
 
-If `tokenburn` is not found, tell the user to run:
-  bash ~/.claude/plugins/superpowers-overrides/install.sh
-
-Do not add commentary before or after the output unless the user asks a follow-up question.
+If `tokenburn` is not found in PATH, tell the user:
+"tokenburn is not installed. Re-run the installer: bash ~/.claude/plugins/superpowers-overrides/install.sh"

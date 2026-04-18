@@ -284,6 +284,30 @@ cd your-project && claude
 
 ---
 
+## Karpathy Guidelines — Always-On Behavioral Layer
+
+<img src="examples/karpathy-banner.svg" alt="Karpathy Guidelines — 4 principles: Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution" width="800"/>
+
+> Derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding mistakes.
+> A lightweight addition to your `~/.claude/CLAUDE.md` that works **alongside** the skill stack — no invocation required.
+
+**Why this complements the skill stack:** Skills need to be invoked. A `CLAUDE.md` is ambient — it fires on every session automatically. These two principles fill the gap when a skill wasn't invoked:
+
+| Principle | What it enforces | Covered by a skill? |
+|---|---|---|
+| **Think Before Coding** | Surface assumptions · present interpretations · ask before picking | Partial — `architect` covers design intent, not assumption surfacing |
+| **Goal-Driven Execution** | Verifiable success criteria per step before writing code | Partial — `forge` + `sentinel` go deep, but only when invoked |
+
+**Add to your global CLAUDE.md in one command:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/examples/karpathy-guidelines.md >> ~/.claude/CLAUDE.md
+```
+
+Full annotated example → [`examples/karpathy-guidelines.md`](examples/karpathy-guidelines.md)
+
+---
+
 ## Credits
 
 - **[Jesse Vincent (@obra)](https://github.com/obra)** — original 14-skill Superpowers foundation

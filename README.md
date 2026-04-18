@@ -12,11 +12,31 @@ curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/m
 
 ---
 
-> **If this system saved you hours of debugging, reduced your API bill, or closed a gap you were struggling with — consider buying me a coffee.**
->
-> [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20this%20work-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/GadaaLabs)
->
-> You can also open a PR, star the repo, or share it. All of it helps.
+## Karpathy Guidelines — Always-On Behavioral Layer
+
+<img src="examples/karpathy-banner.svg" alt="Karpathy Guidelines — 4 principles: Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution" width="800"/>
+
+> Derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding mistakes.
+> A lightweight addition to your `~/.claude/CLAUDE.md` that works **alongside** the skill stack — no invocation required.
+
+**Why this complements the skill stack:** Skills need to be invoked. A `CLAUDE.md` is ambient — it fires on every session automatically. These two principles fill the gap when a skill wasn't invoked:
+
+| Principle | What it enforces | Covered by a skill? |
+|---|---|---|
+| **Think Before Coding** | Surface assumptions · present interpretations · ask before picking | Partial — `architect` covers design intent, not assumption surfacing |
+| **Goal-Driven Execution** | Verifiable success criteria per step before writing code | Partial — `forge` + `sentinel` go deep, but only when invoked |
+
+**Add to your global CLAUDE.md in one command:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/examples/karpathy-guidelines.md >> ~/.claude/CLAUDE.md
+```
+
+Full annotated example → [`examples/karpathy-guidelines.md`](examples/karpathy-guidelines.md)
+
+---
+
+[![Support this work](examples/coffee-banner.svg)](https://buymeacoffee.com/GadaaLabs)
 
 ---
 
@@ -284,30 +304,6 @@ cd your-project && claude
 
 ---
 
-## Karpathy Guidelines — Always-On Behavioral Layer
-
-<img src="examples/karpathy-banner.svg" alt="Karpathy Guidelines — 4 principles: Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution" width="800"/>
-
-> Derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding mistakes.
-> A lightweight addition to your `~/.claude/CLAUDE.md` that works **alongside** the skill stack — no invocation required.
-
-**Why this complements the skill stack:** Skills need to be invoked. A `CLAUDE.md` is ambient — it fires on every session automatically. These two principles fill the gap when a skill wasn't invoked:
-
-| Principle | What it enforces | Covered by a skill? |
-|---|---|---|
-| **Think Before Coding** | Surface assumptions · present interpretations · ask before picking | Partial — `architect` covers design intent, not assumption surfacing |
-| **Goal-Driven Execution** | Verifiable success criteria per step before writing code | Partial — `forge` + `sentinel` go deep, but only when invoked |
-
-**Add to your global CLAUDE.md in one command:**
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/GadaaLabs/claude-code-on-steroids/main/examples/karpathy-guidelines.md >> ~/.claude/CLAUDE.md
-```
-
-Full annotated example → [`examples/karpathy-guidelines.md`](examples/karpathy-guidelines.md)
-
----
-
 ## Credits
 
 - **[Jesse Vincent (@obra)](https://github.com/obra)** — original 14-skill Superpowers foundation
@@ -319,7 +315,7 @@ Full annotated example → [`examples/karpathy-guidelines.md`](examples/karpathy
 
 ## Support This Work
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/GadaaLabs)
+[![Support this work](examples/coffee-banner.svg)](https://buymeacoffee.com/GadaaLabs)
 
 If this closed a gap in your workflow, reduced your API costs, or helped you ship something — a coffee keeps this maintained and expanded.
 

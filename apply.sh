@@ -36,3 +36,17 @@ fi
 if [ -d "$OVERRIDES_DIR/commands" ] && [ -d "$INSTALL_PATH/commands" ]; then
   cp "$OVERRIDES_DIR/commands/"*.md "$INSTALL_PATH/commands/" 2>/dev/null || true
 fi
+
+# ── Hooks (e.g. fixed session-start that reads ascend instead of using-superpowers) ──
+if [ -d "$OVERRIDES_DIR/hooks" ] && [ -d "$INSTALL_PATH/hooks" ]; then
+  for hook in "$OVERRIDES_DIR/hooks/"*; do
+    [ -f "$hook" ] || continue
+    name=$(basename "$hook")
+    cp "$hook" "$INSTALL_PATH/hooks/$name"
+    # Preserve executable bit for shell scripts (extensionless or .sh)
+    case "$name" in
+      *.json|*.cmd) ;;
+      *) chmod +x "$INSTALL_PATH/hooks/$name" 2>/dev/null || true ;;
+    esac
+  done
+fi
